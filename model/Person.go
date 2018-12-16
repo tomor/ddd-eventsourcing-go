@@ -1,18 +1,18 @@
 package model
 
 type Person struct {
-	id                *PersonId
-	name              *Name
-	basicEmailAddress *EmailAddress
-	homeAddress       *Address
+	personId     *PersonId
+	name         *Name
+	emailAddress *EmailAddress
+	homeAddress  *Address
 
 	recordedEvents []*DomainEvent
 }
 
-func Register(id *PersonId, name *Name, emailAddress *EmailAddress) *Person {
+func Register(personId *PersonId, name *Name, emailAddress *EmailAddress) *Person {
 	ev := NewDomainEvent(
 		PersonRegisteredEventName,
-		NewPersonRegistered(id, name, emailAddress),
+		NewPersonRegistered(personId, name, emailAddress),
 	)
 
 	p := &Person{}
@@ -22,19 +22,24 @@ func Register(id *PersonId, name *Name, emailAddress *EmailAddress) *Person {
 }
 
 func (p *Person) ConfirmEmailAddress() {
-	if !p.basicEmailAddress.Confirmed {
+	if !p.emailAddress.Confirmed {
 		ev := NewDomainEvent(
 			PersonEmailAddresConfirmedEventName,
-			NewPersonEmailAddressConfirmed(p.id),
+			NewPersonEmailAddressConfirmed(p.personId),
 		)
 
 		p.recordThat(ev)
 	}
 }
 
-//TODO: finish adress: events:
-//AddressAdded
-//AddressChanged
+func (p *Person) AddHomeAddress(address *Address) {
+	ev := NewDomainEvent(
+		HomeAddressAddedEventName,
+		NewHomeAddressAdded(p.personId, address),
+	)
+
+	p.recordThat(ev)
+}
 
 /*************** Event sourcing - technical methods */
 func Reconstitute(events []*DomainEvent) *Person {
@@ -44,6 +49,7 @@ func Reconstitute(events []*DomainEvent) *Person {
 		p.apply(event)
 	}
 
+	// TODO test this function and create the code that will use it
 	return p
 }
 
@@ -62,18 +68,29 @@ func (p *Person) apply(event *DomainEvent) {
 		p.whenPersonRegistered(event.Payload().(*PersonRegistered))
 	case PersonEmailAddresConfirmedEventName:
 		p.whenPersonEmailAddressConfirmed()
+	case HomeAddressAddedEventName:
+		p.whenHomeAddressAdded(event.Payload().(*HomeAddressAdded))
 	default:
 		// maybe error or ??..
-
 	}
 }
 
 func (p *Person) whenPersonRegistered(event *PersonRegistered) {
-	p.id = NewPersonIdWithoutValidation(event.personId)
+	p.personId = NewPersonIdWithoutValidation(event.personId)
 	p.name = NewNameWithoutValidation(event.firstName, event.lastName)
-	p.basicEmailAddress = NewEmailAddressWithoutValidation(event.emailAddress)
+	p.emailAddress = NewEmailAddressWithoutValidation(event.emailAddress)
 }
 
 func (p *Person) whenPersonEmailAddressConfirmed() {
-	p.basicEmailAddress = p.basicEmailAddress.Confirm()
+	p.emailAddress = p.emailAddress.Confirm()
+}
+
+func (p *Person) whenHomeAddressAdded(event *HomeAddressAdded) {
+	p.homeAddress = NewAddressWithoutValidation(
+		event.countryCode,
+		event.postalCode,
+		event.city,
+		event.street,
+		event.houseNumber,
+	)
 }

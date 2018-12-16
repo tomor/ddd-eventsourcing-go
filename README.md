@@ -24,12 +24,14 @@
  * Add new behaviour to the `Email` - "confirm email" 
    * adapt value object and also the aggregate
    * create domain event `EmailConfirmed`
- * 
+ 
  
 ### TODOs
  * Finish `Address` events 
    * AddressAdded
    * AddressChanged
+ * Use `Reconstitute` method
+   
   
   
 # Notes / findings

@@ -33,6 +33,16 @@ func NewAddress(countryCode string, postalCode string, city string, street strin
 	return address, nil
 }
 
+func NewAddressWithoutValidation(countryCode string, postalCode string, city string, street string, houseNumber string) *Address {
+	return &Address{
+		CountryCode: strings.TrimSpace(countryCode),
+		PostalCode:  strings.TrimSpace(postalCode),
+		City:        strings.TrimSpace(city),
+		Street:      strings.TrimSpace(street),
+		HouseNumber: strings.TrimSpace(houseNumber),
+	}
+}
+
 func (address *Address) validate() error {
 	if address.City == "" {
 		return ErrCityIsEmpty

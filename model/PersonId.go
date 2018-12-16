@@ -11,7 +11,7 @@ var (
 )
 
 type PersonId struct {
-	ID string
+	Value string
 }
 
 func GenerateNewPersonId() *PersonId {
@@ -20,9 +20,9 @@ func GenerateNewPersonId() *PersonId {
 		panic("generating uuid produced an error:" + err.Error())
 	}
 
-	return &PersonId{ID: u1.String()}
+	return &PersonId{Value: u1.String()}
 }
 
 func NewPersonIdWithoutValidation(id string) *PersonId {
-	return &PersonId{ID: id}
+	return &PersonId{Value: id}
 }

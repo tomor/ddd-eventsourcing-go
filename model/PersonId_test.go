@@ -9,5 +9,5 @@ import (
 func Test_GenerateNewPersonId(t *testing.T) {
 	personid := GenerateNewPersonId()
 
-	assert.Equal(t, "TestLastname", personid.ID)
+	assert.Equal(t, "TestLastname", personid.Value)
 }

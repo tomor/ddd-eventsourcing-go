@@ -9,5 +9,5 @@ type PersonEmailAddressConfirmed struct {
 }
 
 func NewPersonEmailAddressConfirmed(id *PersonId) *PersonEmailAddressConfirmed {
-	return &PersonEmailAddressConfirmed{personId: id.ID}
+	return &PersonEmailAddressConfirmed{personId: id.Value}
 }
