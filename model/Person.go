@@ -34,8 +34,8 @@ func (p *Person) ConfirmEmailAddress() {
 
 func (p *Person) AddHomeAddress(address *Address) {
 	ev := NewDomainEvent(
-		HomeAddressAddedEventName,
-		NewHomeAddressAdded(p.personId, address),
+		PersonHomeAddressAddedEventName,
+		NewPersonHomeAddressAdded(p.personId, address),
 	)
 
 	p.recordThat(ev)
@@ -68,8 +68,8 @@ func (p *Person) apply(event *DomainEvent) {
 		p.whenPersonRegistered(event.Payload().(*PersonRegistered))
 	case PersonEmailAddresConfirmedEventName:
 		p.whenPersonEmailAddressConfirmed()
-	case HomeAddressAddedEventName:
-		p.whenHomeAddressAdded(event.Payload().(*HomeAddressAdded))
+	case PersonHomeAddressAddedEventName:
+		p.whenPersonHomeAddressAdded(event.Payload().(*PersonHomeAddressAdded))
 	default:
 		// maybe error or ??..
 	}
@@ -85,7 +85,7 @@ func (p *Person) whenPersonEmailAddressConfirmed() {
 	p.emailAddress = p.emailAddress.Confirm()
 }
 
-func (p *Person) whenHomeAddressAdded(event *HomeAddressAdded) {
+func (p *Person) whenPersonHomeAddressAdded(event *PersonHomeAddressAdded) {
 	p.homeAddress = NewAddressWithoutValidation(
 		event.countryCode,
 		event.postalCode,

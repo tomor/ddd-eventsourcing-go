@@ -1,11 +1,11 @@
 package model
 
 const (
-	HomeAddressAddedEventName = "HomeAddressAdded"
+	PersonHomeAddressAddedEventName = "PersonHomeAddressAdded"
 )
 
-type HomeAddressAdded struct {
-	personId string
+type PersonHomeAddressAdded struct {
+	personId    string
 	countryCode string
 	postalCode  string
 	city        string
@@ -13,8 +13,8 @@ type HomeAddressAdded struct {
 	houseNumber string
 }
 
-func NewHomeAddressAdded(personId *PersonId, address *Address) *HomeAddressAdded  {
-	return &HomeAddressAdded{
+func NewPersonHomeAddressAdded(personId *PersonId, address *Address) *PersonHomeAddressAdded {
+	return &PersonHomeAddressAdded{
 		personId:    personId.Value,
 		countryCode: address.CountryCode,
 		postalCode:  address.PostalCode,
