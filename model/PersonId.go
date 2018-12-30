@@ -1,13 +1,7 @@
 package model
 
 import (
-	"errors"
-
 	"github.com/satori/go.uuid"
-)
-
-var (
-	ErrInvalidPersonId = errors.New("first name cannot be empty")
 )
 
 type PersonId struct {
