@@ -41,6 +41,15 @@ func (p *Person) AddHomeAddress(address *Address) {
 	p.recordThat(ev)
 }
 
+func (p *Person) ChangeHomeAddress(address *Address) {
+	ev := NewDomainEvent(
+		PersonHomeAddressChangedEventName,
+		NewPersonHomeAddressChanged(p.personId, address),
+	)
+
+	p.recordThat(ev)
+}
+
 /*************** Event sourcing - technical methods */
 
 func Reconstitute(events []*DomainEvent) *Person {
@@ -70,6 +79,8 @@ func (p *Person) apply(event *DomainEvent) {
 		p.whenPersonEmailAddressConfirmed()
 	case PersonHomeAddressAddedEventName:
 		p.whenPersonHomeAddressAdded(event.Payload().(*PersonHomeAddressAdded))
+	case PersonHomeAddressChangedEventName:
+		p.whenPersonHomeAddressChanged(event.Payload().(*PersonHomeAddressChanged))
 	default:
 		// maybe error or ??..
 	}
@@ -86,6 +97,16 @@ func (p *Person) whenPersonEmailAddressConfirmed() {
 }
 
 func (p *Person) whenPersonHomeAddressAdded(event *PersonHomeAddressAdded) {
+	p.homeAddress = NewAddressWithoutValidation(
+		event.countryCode,
+		event.postalCode,
+		event.city,
+		event.street,
+		event.houseNumber,
+	)
+}
+
+func (p *Person) whenPersonHomeAddressChanged(event *PersonHomeAddressChanged) {
 	p.homeAddress = NewAddressWithoutValidation(
 		event.countryCode,
 		event.postalCode,

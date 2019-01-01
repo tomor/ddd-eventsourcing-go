@@ -15,6 +15,7 @@
  * Golang
 
 # Steps
+## First Part
  * Create `Name` value object and tests (I will not mention tests in the following steps, just create them always ;)
  * Create simple `Email` value object, only with the "email" value (confirm will come later)
  * Create `Address` value object with basic fields (CountryCode, PostalCode,City,Street,HouseNumber)
@@ -24,14 +25,15 @@
  * Add new behaviour to the `Email` - "confirm email" 
    * adapt value object and also the aggregate
    * create domain event `EmailConfirmed`
- 
- 
-### TODOs
  * Implement `Address` events 
    * AddressAdded
    * AddressChanged
- * Use `Reconstitute` method
    
+## Next Part [TODO]
+ * Implement the event store (maybe with PostgreSQL)
+   
+### Questions
+ * Why do we have "add home address" and "change home address" - why do we have two distinct actions in our domain?   
   
   
 # Notes / findings

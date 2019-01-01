@@ -19,7 +19,7 @@ func Test_RegisterPerson(t *testing.T) {
 
 func Test_ConfirmEmailAddress(t *testing.T) {
 	// given
-	p := registerPerson()
+	p := registerPerson() // produces 1 event
 
 	// when
 	p.ConfirmEmailAddress()
@@ -54,6 +54,39 @@ func Test_AddHomeAddress(t *testing.T) {
 	assert.Equal(t, PersonRegisteredEventName, p.RecordedEvents()[0].eventName)
 	assert.Equal(t, PersonHomeAddressAddedEventName, p.RecordedEvents()[1].eventName)
 	assert.IsType(t, new(PersonHomeAddressAdded), p.RecordedEvents()[1].Payload())
+
+	assert.Equal(t, "city", p.homeAddress.City)
+	assert.Equal(t, "country code", p.homeAddress.CountryCode)
+	assert.Equal(t, "15", p.homeAddress.HouseNumber)
+	assert.Equal(t, "street", p.homeAddress.Street)
+	assert.Equal(t, "postal code", p.homeAddress.PostalCode)
+}
+
+func Test_ChangeHomeAddress(t *testing.T) {
+	// given
+	p := reconstitutePersonWith_Name_ConfirmedEmailAddress_Address()
+
+	// when
+	homeAddress := NewAddressWithoutValidation(
+		"changed country code",
+		"changed postal code	",
+		"changed city",
+		"changed street",
+		"changed house number",
+	)
+
+	p.ChangeHomeAddress(homeAddress)
+
+	// then
+	assert.Len(t, p.RecordedEvents(), 1)
+	assert.Equal(t, PersonHomeAddressChangedEventName, p.RecordedEvents()[0].eventName)
+	assert.IsType(t, new(PersonHomeAddressChanged), p.RecordedEvents()[0].Payload())
+
+	assert.Equal(t, "changed city", p.homeAddress.City)
+	assert.Equal(t, "changed country code", p.homeAddress.CountryCode)
+	assert.Equal(t, "changed house number", p.homeAddress.HouseNumber)
+	assert.Equal(t, "changed street", p.homeAddress.Street)
+	assert.Equal(t, "changed postal code", p.homeAddress.PostalCode)
 }
 
 func Test_Reconstitute_With_HomeAddress_EmailNotConfirmed(t *testing.T) {
@@ -153,4 +186,63 @@ func registerPerson() *Person {
 		name,
 		email,
 	)
+}
+
+// test that the helper method works ok
+func Test_reconstitutePersonWith_Name_ConfirmedEmailAddress_Address(t *testing.T) {
+	// given
+	// check data in the `reconstitutePersonWithName_EmailAddress_Address()` function
+
+	// when
+	p := reconstitutePersonWith_Name_ConfirmedEmailAddress_Address()
+
+	// then
+	assert.Equal(t, "defaultestingpersonid", p.personId.Value)
+	assert.Equal(t, "defaulttesting@email.com", p.emailAddress.Value)
+	assert.Equal(t, true, p.emailAddress.Confirmed)
+	assert.Equal(t, "default firstname", p.name.FirstName)
+	assert.Equal(t, "default last name", p.name.LastName)
+	assert.Equal(t, "defaultcity", p.homeAddress.City)
+	assert.Equal(t, "defaultcountrycode", p.homeAddress.CountryCode)
+	assert.Equal(t, "defaulthousenumber", p.homeAddress.HouseNumber)
+	assert.Equal(t, "defaultstreet", p.homeAddress.Street)
+	assert.Equal(t, "defaultpostalcode", p.homeAddress.PostalCode)
+}
+
+func reconstitutePersonWith_Name_ConfirmedEmailAddress_Address() *Person {
+	personId := NewPersonIdWithoutValidation("defaultestingpersonid")
+	name := NewNameWithoutValidation("default firstname", "default last name")
+	email := NewEmailAddressWithoutValidation("defaulttesting@email.com")
+
+	events := []*DomainEvent{
+		NewDomainEvent(
+			PersonRegisteredEventName,
+			NewPersonRegistered(
+				personId,
+				name,
+				email,
+			),
+		),
+		NewDomainEvent(
+			PersonEmailAddresConfirmedEventName,
+			NewPersonEmailAddressConfirmed(
+				personId,
+			),
+		),
+		NewDomainEvent(
+			PersonHomeAddressAddedEventName,
+			NewPersonHomeAddressAdded(
+				personId,
+				NewAddressWithoutValidation(
+					"defaultcountrycode",
+					"defaultpostalcode",
+					"defaultcity",
+					"defaultstreet",
+					"defaulthousenumber",
+				),
+			),
+		),
+	}
+
+	return Reconstitute(events)
 }
