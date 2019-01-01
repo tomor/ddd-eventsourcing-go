@@ -27,7 +27,7 @@
  
  
 ### TODOs
- * Finish `Address` events 
+ * Implement `Address` events 
    * AddressAdded
    * AddressChanged
  * Use `Reconstitute` method

@@ -42,6 +42,7 @@ func (p *Person) AddHomeAddress(address *Address) {
 }
 
 /*************** Event sourcing - technical methods */
+
 func Reconstitute(events []*DomainEvent) *Person {
 	p := &Person{}
 

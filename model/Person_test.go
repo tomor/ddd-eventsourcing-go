@@ -27,6 +27,9 @@ func Test_ConfirmEmailAddress(t *testing.T) {
 
 	// then
 	assert.Len(t, p.RecordedEvents(), 2)
+	assert.Equal(t, PersonRegisteredEventName, p.RecordedEvents()[0].eventName)
+	assert.Equal(t, PersonEmailAddresConfirmedEventName, p.RecordedEvents()[1].eventName)
+	assert.IsType(t, new(PersonEmailAddressConfirmed), p.RecordedEvents()[1].Payload())
 	// (Note #1) here we could also test that event contains correct values
 	// it depends if we have other tests that will ensure that or not
 }
@@ -47,8 +50,10 @@ func Test_AddHomeAddress(t *testing.T) {
 	p.AddHomeAddress(homeAddress)
 
 	// then
-	assert.Len(t, p.RecordedEvents(), 2) // first event is register, second add home address
-    // (Note #1)
+	assert.Len(t, p.RecordedEvents(), 2)
+	assert.Equal(t, PersonRegisteredEventName, p.RecordedEvents()[0].eventName)
+	assert.Equal(t, PersonHomeAddressAddedEventName, p.RecordedEvents()[1].eventName)
+	assert.IsType(t, new(PersonHomeAddressAdded), p.RecordedEvents()[1].Payload())
 }
 
 // TODO tests for apply() method are still missing
@@ -73,7 +78,6 @@ func Test_Reconstitute(t *testing.T) {
 
 	// then
 }
-
 
 /*** helper methods ***/
 func registerPerson() *Person {
