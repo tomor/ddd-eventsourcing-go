@@ -19,3 +19,9 @@ func Test_NewName_InvalidFirstName(t *testing.T) {
 
 	assert.EqualError(t, error, ErrFistNameIsEmpty.Error())
 }
+
+func Test_NewName_InvalidLastName(t *testing.T) {
+	_, error := NewName("First name", "")
+
+	assert.EqualError(t, error, ErrLastNameIsEmpty.Error())
+}

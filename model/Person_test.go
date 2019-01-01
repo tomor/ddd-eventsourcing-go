@@ -56,30 +56,94 @@ func Test_AddHomeAddress(t *testing.T) {
 	assert.IsType(t, new(PersonHomeAddressAdded), p.RecordedEvents()[1].Payload())
 }
 
-// TODO tests for apply() method are still missing
-
-func Test_Reconstitute(t *testing.T) {
-	var events [2]*DomainEvent
-	name, _ := NewName("first", "last")
-	email, _ := NewEmailAddress("myemail@dot.com")
-
+func Test_Reconstitute_With_HomeAddress_EmailNotConfirmed(t *testing.T) {
 	// given
-	events[0] = NewDomainEvent(
-		PersonRegisteredEventName,
-		NewPersonRegistered(
-			NewPersonIdWithoutValidation("testingpersonid"),
-			name,
-			email,
+	personId := NewPersonIdWithoutValidation("testingpersonid")
+	name := NewNameWithoutValidation("first", "last")
+	email := NewEmailAddressWithoutValidation("myemail@dot.com")
+
+	events := []*DomainEvent{
+		NewDomainEvent(
+			PersonRegisteredEventName,
+			NewPersonRegistered(
+				personId,
+				name,
+				email,
+			),
 		),
-	)
+		NewDomainEvent(
+			PersonEmailAddresConfirmedEventName,
+			NewPersonEmailAddressConfirmed(
+				personId,
+			),
+		),
+		NewDomainEvent(
+			PersonHomeAddressAddedEventName,
+			NewPersonHomeAddressAdded(
+				personId,
+				NewAddressWithoutValidation(
+					"DE",
+					"80686",
+					"München",
+					"Our test street",
+					"250",
+				),
+			),
+		),
+	}
 
 	// when
-	//p := Reconstitute(events)  TODO continue here
+	p := Reconstitute(events)
 
 	// then
+	assert.Equal(t, personId, p.personId)
+	assert.Equal(t, email.Value, p.emailAddress.Value)
+	assert.Equal(t, true, p.emailAddress.Confirmed)
+	assert.Equal(t, name.FirstName, p.name.FirstName)
+	assert.Equal(t, name.LastName, p.name.LastName)
+	assert.Equal(t, "München", p.homeAddress.City)
+	assert.Equal(t, "DE", p.homeAddress.CountryCode)
+	assert.Equal(t, "250", p.homeAddress.HouseNumber)
+	assert.Equal(t, "Our test street", p.homeAddress.Street)
+	assert.Equal(t, "80686", p.homeAddress.PostalCode)
 }
 
-/*** helper methods ***/
+func Test_Reconstitute_With_ConfirmedEmailAddress(t *testing.T) {
+	personId := NewPersonIdWithoutValidation("testingpersonid")
+	name := NewNameWithoutValidation("first", "last")
+	email := NewEmailAddressWithoutValidation("myemail@dot.com")
+
+	// given
+	events := []*DomainEvent{
+		NewDomainEvent(
+			PersonRegisteredEventName,
+			NewPersonRegistered(
+				personId,
+				name,
+				email,
+			),
+		),
+		NewDomainEvent(
+			PersonEmailAddresConfirmedEventName,
+			NewPersonEmailAddressConfirmed(
+				personId,
+			),
+		),
+	}
+
+	// when
+	p := Reconstitute(events)
+
+	// then
+	assert.Equal(t, personId, p.personId)
+	assert.Equal(t, email.Value, p.emailAddress.Value)
+	assert.Equal(t, true, p.emailAddress.Confirmed)
+	assert.Equal(t, name.FirstName, p.name.FirstName)
+	assert.Equal(t, name.LastName, p.name.LastName)
+	assert.Empty(t, p.homeAddress)
+}
+
+/*** test helper methods ***/
 func registerPerson() *Person {
 	name, _ := NewName("first", "last")
 	email, _ := NewEmailAddress("myemail@dot.com")

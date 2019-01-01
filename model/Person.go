@@ -50,7 +50,6 @@ func Reconstitute(events []*DomainEvent) *Person {
 		p.apply(event)
 	}
 
-	// TODO test this function and create the code that will use it
 	return p
 }
 
