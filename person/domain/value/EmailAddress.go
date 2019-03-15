@@ -1,4 +1,4 @@
-package model
+package value
 
 import (
 	"errors"

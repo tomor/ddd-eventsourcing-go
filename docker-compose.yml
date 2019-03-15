@@ -9,6 +9,8 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
+      ESWORKSHOP_USERNAME: esworkshop
+      ESWORKSHOP_PASSWORD: password123
     ports:
       - 5432:5432
 
