@@ -1,6 +1,8 @@
 package ports
 
+import "github.com/tomor/ddd-eventsourcing-go/shared"
+
 type EventStore interface {
-	Append([]DomainEvent) error
-	FetchEventsByAggregateID(id AggregateID) ([]DomainEvent, error)
+	Append([]shared.DomainEvent) error
+	FetchEventsByAggregateID(id shared.AggregateID) ([]shared.DomainEvent, error)
 }

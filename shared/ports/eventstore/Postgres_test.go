@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/tomor/ddd-eventsourcing-go/person/domain/event"
 	"github.com/tomor/ddd-eventsourcing-go/person/domain/value"
-	"github.com/tomor/ddd-eventsourcing-go/shared/ports"
+	"github.com/tomor/ddd-eventsourcing-go/shared"
 	"testing"
 )
 
@@ -19,7 +19,7 @@ func Test_Append(t *testing.T) {
 
 	// when
 
-	events := []ports.DomainEvent{
+	events := []shared.DomainEvent{
 		event.NewPersonDomainEvent(event.PersonEmailAddresConfirmedEventName, personID, event.NewPersonEmailAddressConfirmed(personID)),
 	}
 

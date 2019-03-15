@@ -1,4 +1,4 @@
-package ports
+package shared
 
 type DomainEvent interface {
 	EventName() string

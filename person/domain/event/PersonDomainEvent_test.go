@@ -8,8 +8,10 @@ import (
 
 func Test_DomainEvent_Marshal_success(t *testing.T) {
 	// given
+	personID := value.NewPersonIdWithoutValidation("123")
 	event := NewPersonDomainEvent(
 		PersonEmailAddresConfirmedEventName,
+		personID,
 		NewPersonEmailAddressConfirmed(value.NewPersonIdWithoutValidation("123")),
 	)
 

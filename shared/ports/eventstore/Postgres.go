@@ -2,7 +2,7 @@ package eventstore
 
 import (
 	"database/sql"
-	"github.com/tomor/ddd-eventsourcing-go/shared/ports"
+	"github.com/tomor/ddd-eventsourcing-go/shared"
 )
 
 type Postgres struct {
@@ -13,10 +13,10 @@ func NewPostgres(db *sql.DB) *Postgres {
 	return &Postgres{db}
 }
 
-func (p *Postgres) Append([]ports.DomainEvent) error {
+func (p *Postgres) Append([]shared.DomainEvent) error {
 	return nil
 }
 
-func (p *Postgres) FetchEventsByAggregateID(id ports.AggregateID) ([]ports.DomainEvent, error) {
+func (p *Postgres) FetchEventsByAggregateID(id shared.AggregateID) ([]shared.DomainEvent, error) {
 	return nil, nil
 }

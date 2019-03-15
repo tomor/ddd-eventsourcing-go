@@ -2,15 +2,15 @@ package event
 
 import (
 	"encoding/json"
-	"github.com/tomor/ddd-eventsourcing-go/shared/ports"
+	"github.com/tomor/ddd-eventsourcing-go/shared"
 	"time"
 )
 
 // this struct seems to be generic, maybe we could move it somewhere from person package
 type PersonDomainEvent struct {
-	Meta     *EventMeta        `json:"meta"`
-	PersonID ports.AggregateID `json:"aggregate_id"`
-	Payload  interface{}       `json:"payload"`
+	Meta     *EventMeta         `json:"meta"`
+	PersonID shared.AggregateID `json:"aggregate_id"`
+	Payload  interface{}        `json:"payload"`
 }
 
 type EventMeta struct {
@@ -18,7 +18,7 @@ type EventMeta struct {
 	OccuredAt time.Time `json:"occured_at"`
 }
 
-func NewPersonDomainEvent(eventName string, personID ports.AggregateID, payload interface{}) *PersonDomainEvent {
+func NewPersonDomainEvent(eventName string, personID shared.AggregateID, payload interface{}) *PersonDomainEvent {
 	return &PersonDomainEvent{
 		Meta: &EventMeta{
 			EventName: eventName,
@@ -29,6 +29,7 @@ func NewPersonDomainEvent(eventName string, personID ports.AggregateID, payload 
 	}
 }
 
+
 func (de *PersonDomainEvent) EventName() string {
 	return de.Meta.EventName
 }
@@ -37,7 +38,7 @@ func (de *PersonDomainEvent) OccuredAt() string {
 	return de.Meta.OccuredAt.Format(time.RFC3339)
 }
 
-func (de *PersonDomainEvent) AggregateID() *ports.AggregateID {
+func (de *PersonDomainEvent) AggregateID() shared.AggregateID {
 	return de.PersonID
 }
 
